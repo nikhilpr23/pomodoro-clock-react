@@ -12,7 +12,7 @@ class App extends Component {
       initialBreak: 5,
       initialSession: 25,
       limit: false,
-      timerType: 'Session',
+      session: true,
       sec: 0
     }
     this.audioRef = React.createRef();
@@ -29,11 +29,11 @@ class App extends Component {
   increment(mode){
     if(!this.state.ticking){
     (mode === 'breakLength' ? 
-      this.state.breakLength >= 1 && this.state.breakLength < 60 ? 
+      this.state.initialBreak >= 1 && this.state.initialBreak < 60 ? 
       this.setState({
         breakLength: this.state.initialBreak + 1,
         initialBreak: this.state.initialBreak + 1}) : this.setState({limit: true}): 
-      this.state.sessionLength >= 1 && this.state.sessionLength < 60 ? 
+      this.state.initialSession >= 1 && this.state.initialSession < 60 ? 
       this.setState({        
         initialSession: this.state.initialSession + 1,
         sessionLength: this.state.initialSession + 1,
@@ -43,11 +43,11 @@ class App extends Component {
   decrement(mode){
     if(!this.state.ticking){
     (mode === 'breakLength' ? 
-      this.state.breakLength > 1 && this.state.breakLength <= 60 ? 
+      this.state.initialBreak > 1 && this.state.initialBreak <= 60 ? 
       this.setState({
         breakLength: this.state.initialBreak - 1,
         initialBreak: this.state.initialBreak - 1}) : this.setState({limit: true}) : 
-      this.state.sessionLength > 1 && this.state.sessionLength <= 60 ? 
+      this.state.initialSession > 1 && this.state.initialSession <= 60 ? 
       this.setState({
         sessionLength: this.state.initialSession - 1,
         initialSession: this.state.initialSession - 1,
@@ -55,13 +55,13 @@ class App extends Component {
   }
 
   limitExceed(){
-    let warning = 'Limit has been reached';
+    let warning = 'Limit has been reached!';
     setTimeout(() => this.setState({limit: false}), 300);
     return warning;
   }
 
   display(){
-    let min = this.state.timerType === 'Session' ? this.state.sessionLength : this.state.breakLength;
+    let min = this.state.session ? this.state.sessionLength : this.state.breakLength;
     min =  min < 10 ? '0'+ min : min;
     let sec = this.state.sec;
     sec = sec < 10 ? '0'+ sec : sec;
@@ -73,11 +73,11 @@ class App extends Component {
   }
 
   ticking() {    
-    if(this.state.timerType === 'Session'){
+    if(this.state.session){
       if(this.state.sessionLength === 0 && this.state.sec === 0){
           this.audioRef.current.play();
           this.setState({
-            timerType:'Break',            
+            session: false,            
             sec:0,
             sessionLength: this.state.initialSession
           })}
@@ -93,7 +93,7 @@ class App extends Component {
       if(this.state.breakLength === 0 && this.state.sec === 0){
         this.audioRef.current.play();
         this.setState({
-          timerType:'Session',
+          session: true,
           sec:0,
           breakLength: this.state.initialBreak
         })}
@@ -115,7 +115,7 @@ class App extends Component {
       sessionLength: 25,      
       initialBreak: 5,
       initialSession: 25,
-      timerType: 'Session',
+      session: true,
       sec: 0,      
       ticking: false
     })
@@ -130,28 +130,41 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <div id="break-label">
-          <h1> Break Length </h1>
-          <button id="break-increment" onClick={() => this.increment('breakLength')}>↑</button>
-          <span id="break-length">{this.state.initialBreak}</span>
-          <button id="break-decrement" onClick={() => this.decrement('breakLength')}>↓</button>
+        <h1> Pomodoro Cl<i className="fa fa-clock-o"/>ck </h1>
+        <div className="container">
+          <div className="lengthForm">
+            <div id="break-label">
+              <span className="lengthLabel"> Break Length: </span>              
+              <span id="break-length">{this.state.initialBreak}</span>
+              <button id="break-increment" onClick={() => this.increment('breakLength')}>
+                <i className="fa fa-arrow-up"/></button>
+              <button id="break-decrement" onClick={() => this.decrement('breakLength')}>
+                <i className="fa fa-arrow-down"/></button>
+            </div>
+            <div id="session-label">          
+              <span className="lengthLabel"> Session Length: </span>              
+              <span id="session-length">{this.state.initialSession}</span>
+              <button id="session-increment" onClick={() => this.increment('sessionLength')}>
+                <i className="fa fa-arrow-up"/>
+              </button>
+              <button id="session-decrement" onClick={() => this.decrement('sessionLength')}>
+                <i className="fa fa-arrow-down"/></button>
+            </div>
+          </div>
+          <div className="timer">
+            <span id="timer-label" className={this.state.session ? 'orange' : 'green'}>
+              {this.state.session ? 'Session in Progress!' : 'Break Time'}</span>            
+            <p className="limitLabel">{this.state.limit ? this.limitExceed() : ''}</p>
+            <div id="time-left">{this.display()}</div><br/>
+            <audio id="beep" ref={this.audioRef}>
+              <source src={Beep} type="audio/mpeg"/>
+            </audio>
+            <button id="start_stop" onClick={this.countDown}>
+              <i className={!this.state.ticking ? "fa fa-play" : "fa fa-pause"}/></button>
+            <button id="reset" onClick={this.reset}>
+              <i className="fa fa-refresh"/></button>        
+          </div>
         </div>
-        <div id="session-label">          
-           <h1> Session Length </h1>
-          <button id="session-increment" onClick={() => this.increment('sessionLength')}>↑</button>
-          <span id="session-length">{this.state.initialSession}</span>
-          <button id="session-decrement" onClick={() => this.decrement('sessionLength')}>↓</button>
-        </div>
-        <p>{this.state.limit ? this.limitExceed() : ''}</p>
-        <div>
-          <h1 id="timer-label">{this.state.timerType}</h1>
-          <div id="time-left">{this.display()}</div>
-          <audio id="beep" ref={this.audioRef}>
-            <source src={Beep} type="audio/mpeg"/>
-          </audio>
-        </div>
-        <button id="start_stop" onClick={this.countDown}>|> ||</button>
-        <button id="reset" onClick={this.reset}>Reset</button>
       </div>
     );
   }
