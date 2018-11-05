@@ -153,7 +153,7 @@ class App extends Component {
           </div>
           <div className="timer">
             <span id="timer-label" className={this.state.session ? 'orange' : 'green'}>
-              {this.state.session ? 'Session Time!' : 'Break Time'}</span>            
+              {this.state.session ? 'Session Time!' : 'Break Time!'}</span>            
             <p className="limitLabel">{this.state.limit ? this.limitExceed() : ''}</p>
             <div id="time-left">{this.display()}</div><br/>
             <audio id="beep" ref={this.audioRef}>

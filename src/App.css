@@ -70,7 +70,8 @@
   background-color:rgba(240, 233, 233, 0.5);
   min-width: 25%;
   border-radius: 5px;
-  margin-left: 5px;  
+  margin-left: 5px; 
+  padding-top: 5px; 
   vertical-align: middle;
 }
 
