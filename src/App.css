@@ -6,6 +6,10 @@
 }
 
 @media only screen and (max-width: 650px){
+  #break-length, #session-length{
+    min-height: 2em;
+    padding-top: 1em;
+  }
 
   .App h1 {
     text-align: center;
@@ -64,14 +68,12 @@
   text-align: center;
   font-family: 'Orbitron', sans-serif;
   font-size: 2em;
-  min-height: 2em;
   font-weight: bolder;
   border: 0.1em solid rgba(24, 18, 18, 0.8);
   background-color:rgba(240, 233, 233, 0.5);
   min-width: 25%;
   border-radius: 5px;
-  margin-left: 5px; 
-  padding-top: 5px; 
+  margin-left: 5px;  
   vertical-align: middle;
 }
 
